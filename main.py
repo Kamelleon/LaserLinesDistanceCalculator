@@ -17,10 +17,10 @@ class HelperFunctions:
         return colors
 
 class ImageManager:
-    def __init__(self,image_name,hsv_image=False):
+    def __init__(self,image_name,hsv_image=False, rotate_image=False):
         self.image_name = image_name
         self.hsv_image = hsv_image
-
+        self.rotate_image = rotate_image
         self.image = None
         self.image_hsv = None
         self.colors = []
@@ -30,28 +30,31 @@ class ImageManager:
 
     def _load_image(self):
         self.image = cv2.imread(self.image_name)
+        if self.rotate_image:
+            self.image = cv2.rotate(self.image, cv2.ROTATE_180)
         cv2.imshow("Source image",self.image)
 
     def get_processed_image(self):
         self._load_image()
         self.image_hsv = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
 
-        # sensitivity = 70
-        # lower_green = np.array([0, 0, 255-sensitivity])
-        # upper_green = np.array([255, sensitivity, 255])  # white mask
-        # lower_green = np.array([40, 40, 40])
-        # upper_green = np.array([110, 255, 255]) # green mask
+        sensitivity = 70
+        lower_mask = np.array([0, 0, 255-sensitivity])
+        upper_mask = np.array([255, sensitivity, 255])  # white mask
 
-        lower_green = np.array([40, 135,40])
-        upper_green = np.array([110, 255,255]) # turkusowa
+        # lower_mask = np.array([40, 40, 40])
+        # upper_mask = np.array([110, 255, 255]) # green mask
 
-        # lower_green = np.array([110, 50, 50])
-        # upper_green = np.array([130, 255, 255]) # blue mask
+        # lower_mask = np.array([40, 135,40])
+        # upper_mask = np.array([110, 255,255]) # turquoise mask
 
-        # lower_red = np.array([62, 62, 90])
-        # upper_red = np.array([255, 255, 255]) # red mask
+        # lower_mask = np.array([110, 50, 50])
+        # upper_mask = np.array([130, 255, 255]) # blue mask
 
-        mask1 = cv2.inRange(self.image_hsv, lower_green, upper_green)
+        # lower_mask = np.array([62, 62, 90])
+        # upper_mask = np.array([255, 255, 255]) # red mask
+
+        mask1 = cv2.inRange(self.image_hsv, lower_mask, upper_mask)
 
         mask = cv2.bitwise_and(self.image,self.image,mask=mask1)
 
@@ -83,50 +86,6 @@ class ImageManager:
         edged = cv2.erode(edged, None, iterations=1)
         return edged
 
-    # def get_referenced_object(self, edged_img):
-    #     cnts = cv2.findContours(edged_img.copy(), cv2.RETR_EXTERNAL,
-    #                             cv2.CHAIN_APPROX_SIMPLE)
-    #     cnts = imutils.grab_contours(cnts)
-    #
-    #     (cnts, _) = contours.sort_contours(cnts)
-    #
-    #     refObj = None
-    #
-    #     for c in cnts:
-    #         # if the contour is not sufficiently large, ignore it
-    #         if cv2.contourArea(c) < 200:
-    #             continue
-    #         # compute the rotated bounding box of the contour
-    #         box = cv2.minAreaRect(c)
-    #         box = cv2.cv.BoxPoints(box) if imutils.is_cv2() else cv2.boxPoints(box)
-    #         box = np.array(box, dtype="int")
-    #         # order the points in the contour such that they appear
-    #         # in top-left, top-right, bottom-right, and bottom-left
-    #         # order, then draw the outline of the rotated bounding
-    #         # box
-    #         box = perspective.order_points(box)
-    #         # compute the center of the bounding box
-    #         cX = np.average(box[:, 0])
-    #         cY = np.average(box[:, 1])
-    #
-    #         # if this is the first contour we are examining (i.e.,
-    #         # the left-most contour), we presume this is the
-    #         # reference object
-    #         if refObj is None:
-    #             # unpack the ordered bounding box, then compute the
-    #             # midpoint between the top-left and top-right points,
-    #             # followed by the midpoint between the top-right and
-    #             # bottom-right
-    #             (tl, tr, br, bl) = box
-    #             (tlblX, tlblY) = HelperFunctions.midpoint(tl, bl)
-    #             (trbrX, trbrY) = HelperFunctions.midpoint(tr, br)
-    #             # compute the Euclidean distance between the midpoints,
-    #             # then construct the reference object
-    #             D = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
-    #             refObj = (box, (cX, cY),
-    #                       D / 2)
-    #             continue
-    #     return refObj
 
     def show_distances(self, img, first_line_right_side_coordinates,second_line_left_side_coordinates,colors):
         orig = img.copy()
@@ -182,14 +141,27 @@ class LineCalculations:
 
     def get_side_coordinates_for_first_line(self, middle_point_of_first_line):
         first_line_right_side_coordinates = []
+        z = 0
         for i in self.first_line:
-            if i[1] > middle_point_of_first_line:
-                first_line_right_side_coordinates.append([i[0], i[1]])
+            if z!=0:
+                if i[0] != self.first_line[z-1][0]:
+                    first_line_right_side_coordinates.append(self.first_line[z-1])
+            z+=1
+            # if i[1] > middle_point_of_first_line:
+            #     first_line_right_side_coordinates.append([i[0], i[1]])
         return first_line_right_side_coordinates
 
     def get_side_coordinates_for_second_line(self, middle_point_of_second_line, first_line_right_side_coordinates):
         second_line_left_side_coordinates = []
+        z = 0
+        # reversed_list = list(reversed(self.second_line))
         for i in self.second_line:
+            # print(i)
+            # if z != 0:
+            #     if i[0] != reversed_list[z - 1][0]:
+            #         print("NOT")
+            #         second_line_left_side_coordinates.append(self.second_line[z - 1])
+            # z += 1
             if i[1] < middle_point_of_second_line and i[1] > self.middle_point_between_lines:
                 if i[0] >= first_line_right_side_coordinates[0][0]:  # Take only coordinates that have this same or greater value of y
                     second_line_left_side_coordinates.append([i[0], i[1]])
@@ -222,25 +194,21 @@ class LineCalculations:
 
 
 if __name__ == "__main__":
-    # "First line" - shorter line (should be on the left side of an image)
-    # "Second line" - longer line (should be on the right side of an image)
 
-    image_manager = ImageManager("wojtek.jpg")
+    image_manager = ImageManager("kamera_rpi_cala_dlugosc.jpg")
 
-    image_manager.set_referenced_object_real_width_in_millimetres(58)
-    image_manager.set_referenced_object_pixel_width(209)
+    image_manager.set_referenced_object_real_width_in_millimetres(60)
+    image_manager.set_referenced_object_pixel_width(131)
     image_manager.calculate_pixel_per_metric()
 
     img = image_manager.get_processed_image()
-    edged_img = image_manager.get_edged_image_with_min_and_max_threshold(img, 100, 300)
+    edged_img = image_manager.get_edged_image_with_min_and_max_threshold(img, 100, 700)
 
     cv2.imshow("Edged image",edged_img)
     cv2.waitKey(0)
 
-    # referenced_object = image_manager.get_referenced_object(edged_img)
-
     line_calculator = LineCalculations(edged_img)
-    line_calculator.set_middle_point_between_lines(180)
+    line_calculator.set_middle_point_between_lines(100)
 
     first_line, second_line = line_calculator.find_coordinates_of_lines()
 
