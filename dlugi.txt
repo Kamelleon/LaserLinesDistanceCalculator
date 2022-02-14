@@ -1,0 +1,4 @@
+Referenced pixel width: 201
+Referenced real width: 109
+middle: 172
+dlugi.jpg
