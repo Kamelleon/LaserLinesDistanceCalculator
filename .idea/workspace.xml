@@ -2,18 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="421d5b0b-56eb-4968-ab3c-423b70237f58" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/dlugi.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kamera_rpi_cala_dlugosc.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/kamera_rpi_cala_dlugosc.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cam3232.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/distances.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/distances.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dlugi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/druga_proba.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/kamera_rpi_cala_dlugosc.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/kostki_duze.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpi_cala_dlugosc.txt" beforeDir="false" afterPath="$PROJECT_DIR$/rpi_cala_dlugosc.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpi_cala_dlugosc_z_bliska.txt" beforeDir="false" afterPath="$PROJECT_DIR$/rpi_cala_dlugosc_z_bliska.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rpi_cala_dlugosc.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/uciete.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/visualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/x.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/y.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/y.pkl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -30,14 +43,35 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/visualizer.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/disortion.py" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\pecet\Desktop\LaserLinesDistanceCalculator-main" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.visualizer">
+    <configuration name="disortion" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="LaserDistanceCalculator" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\pecet\AppData\Local\Programs\Python\Python39\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/disortion.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="LaserDistanceCalculator" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,6 +116,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.disortion" />
       <item itemvalue="Python.visualizer" />
     </list>
   </component>

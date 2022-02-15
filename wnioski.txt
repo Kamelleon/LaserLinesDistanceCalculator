@@ -1,0 +1,8 @@
+1. Maska musi być dobrze ustawiona (zielona lub biała, a środek linii
+lasera na obrazku z krawędziami powinien być pusty)
+2. Linie lasera powinny pokrywać się idealnie podczas kalibracji jeśli
+chcemy uzyskać najdokładniejszy pomiar
+3. Kamera powinna być umieszczona stosunkowo daleko od kostki w celu
+uniknięcia efektu rybiego oka powodującego błędy pomiarowe na kostkach
+po bokach.
+4. Dokładność pomiarowa wynosi około 1mm jeśli bierzemy pełną długość bretu

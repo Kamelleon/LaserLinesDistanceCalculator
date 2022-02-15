@@ -7,7 +7,7 @@ import _pickle as cpickle
 
 
 class ImageManager:
-    def __init__(self, image_name, rotate_image=False):
+    def __init__(self, image_name,rotate_image = False):
         self.image_name = image_name
         self.rotate_image = rotate_image
         self.image = None
@@ -18,23 +18,25 @@ class ImageManager:
         self.image = cv2.imread(self.image_name)
         if self.image is None:
             raise line_calculations_errors.SourceImageNotFoundError(f"No image named: '{self.image_name}' found.")
-
         if self.rotate_image:
             self.image = cv2.rotate(self.image, cv2.ROTATE_180)
+
+        cv2.imshow("dd",self.image)
+        cv2.waitKey(0)
 
     def get_masked_image(self):
         self._load_image()
         self.image_hsv = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
-
-        sensitivity = 105
-        lower_mask = array([0, 0, 255 - sensitivity])
-        upper_mask = array([255, sensitivity, 255])  # white mask
         #
-        # lower_mask = array([40, 40, 40])
-        # upper_mask = array([110, 255, 255]) # green mask
+        # sensitivity = 110
+        # lower_mask = array([0, 0, 255 - sensitivity])
+        # upper_mask = array([255, sensitivity, 255])  # white mask
+        # #
+        lower_mask = array([20, 30, 100]) # W RAZIE POTRZEBY ZMIENIAĆ TYLKO LOWER MASK (WSZYSTKIE 3 WARTOŚCI)
+        upper_mask = array([110, 255, 255]) # green mask
+        # lower_mask = array([40, 135,40])
+        # upper_mask = array([110, 255,255]) # turquoise mask
 
-        # lower_mask = np.array([40, 135,40])
-        # upper_mask = np.array([110, 255,255]) # turquoise mask
 
         # lower_mask = np.array([110, 50, 50])
         # upper_mask = np.array([130, 255, 255]) # blue mask
@@ -202,17 +204,17 @@ class DataSaver:
         print(self.x_list)
 
 if __name__ == "__main__":
-    image_manager = ImageManager("dlugi.jpg", rotate_image=True)
+    image_manager = ImageManager("pelna_dlugosc.png",rotate_image=True)
     image = image_manager.get_masked_image()
-    edged_image = image_manager.get_edged_image_from_masked_image(image, 100, 700)
+    edged_image = image_manager.get_edged_image_from_masked_image(image,10, 700)
 
     laser_lines_calculator = LaserLinesCalculator()
-    laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 172)
+    laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 112)
     left_line_right_side_coordinates, right_line_left_side_coordinates = laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
 
     distances_presenter = DistancesPresenter(image)
-    distances_presenter.referenced_object_real_width = 109
-    distances_presenter.referenced_object_pixel_width = 201
+    distances_presenter.referenced_object_real_width = 66
+    distances_presenter.referenced_object_pixel_width = 118
     distances_list = distances_presenter.calculate_distances_between_laser_lines(left_line_right_side_coordinates,
                                                                 right_line_left_side_coordinates,
                                                                 show_distances_on_image=True)

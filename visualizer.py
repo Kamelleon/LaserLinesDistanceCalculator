@@ -3,7 +3,7 @@ import _pickle as cpickle
 x = cpickle.load(open("x.pkl", "rb"))
 y = cpickle.load(open("y.pkl", "rb"))
 distances = cpickle.load(open("distances.pkl", "rb"))
-color_range = [100,120]
+color_range = [57,75]
 x_axis_range_slider = [-70,90]
 fig = px.scatter(x=x, y=y, color=distances,color_continuous_scale='rdbu_r',range_color=color_range,labels=dict(x="X", y="Rząd", color="Wysokość kostki (mm)"))
 fig.update_layout(plot_bgcolor='rgba(173, 173, 173, 230)',
