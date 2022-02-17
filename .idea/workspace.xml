@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="421d5b0b-56eb-4968-ab3c-423b70237f58" name="Changes" comment="">
+    <list default="true" id="e9d3af6c-288e-46e1-8c39-166cf963b5ec" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cam3232.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/distances.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/distances.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dlugi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/druga_proba.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kamera_rpi_cala_dlugosc.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/kostki_duze.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rpi_cala_dlugosc.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/uciete.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/visualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/x.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/y.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/y.pkl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +26,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="24VQmBeeS9hdeKALpiJETVRe9vI" />
+  <component name="ProjectId" id="25EzTl3lXDTKTsu7omcbMMM9QiF" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -43,37 +35,16 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/disortion.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/visualizer_settings_previewer.py" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\pecet\Desktop\LaserLinesDistanceCalculator-main" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\pecet\Desktop\LaserLinestescik" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.visualizer">
-    <configuration name="disortion" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="LaserDistanceCalculator" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\pecet\AppData\Local\Programs\Python\Python39\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/disortion.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.visualizer_settings_previewer">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="LaserDistanceCalculator" />
+      <module name="LaserLinestescik" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -94,7 +65,7 @@
       <method v="2" />
     </configuration>
     <configuration name="visualizer" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="LaserDistanceCalculator" />
+      <module name="LaserLinestescik" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -114,32 +85,42 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="visualizer_settings_previewer" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="LaserLinestescik" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\pecet\AppData\Local\Programs\Python\Python39\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/visualizer_settings_previewer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.disortion" />
       <item itemvalue="Python.visualizer" />
+      <item itemvalue="Python.visualizer_settings_previewer" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="421d5b0b-56eb-4968-ab3c-423b70237f58" name="Changes" comment="" />
-      <created>1643713430294</created>
+      <changelist id="e9d3af6c-288e-46e1-8c39-166cf963b5ec" name="Changes" comment="" />
+      <created>1645107045975</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1643713430294</updated>
+      <updated>1645107045975</updated>
     </task>
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>

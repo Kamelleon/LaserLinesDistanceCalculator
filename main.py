@@ -208,14 +208,19 @@ class DataSaver:
 
     def save_distances_to_pickle_file(self, distances_list):
         self.distances_list = distances_list
+        print(self.distances_list)
         cpickle.dump(self.distances_list, open('distances.pkl', 'wb'))
 
     def generate_y_for_distances(self):
-        self.y_list = [self.y_list.append(i) for i in range(len(self.distances_list))]
+        for i in range(len(self.distances_list)):
+            self.y_list.append(i)
+        print(self.y_list)
         cpickle.dump(self.y_list, open('y.pkl', 'wb'))
 
     def generate_x_for_distances(self):
-        self.x_list = [self.x_list.append(i) for i in range(len(self.distances_list))]
+        for i in range(len(self.distances_list)):
+            self.x_list.append(0)
+        print(self.x_list)
         cpickle.dump(self.x_list, open('x.pkl', 'wb'))
         self.distances_list.clear()
 
@@ -277,25 +282,25 @@ class DistanceMeasurementsMethods:
 
     def perform_distance_measurements_from_image_file(self):
         image_manager = ImageManager(rotate_source_image=False)
-        image = cv2.imread("PiCameraImage.jpg")
+        image = cv2.imread("pelna_dlugosc.png")
         self.distances_presenter.referenced_object_real_width = 66
         self.distances_presenter.referenced_object_pixel_width = 118
-        while True:
-            masked_image = image_manager.mask_image(image)
-            edged_image = image_manager.get_edged_image_from_masked_image(masked_image, 10, 700)
+        # while True:
+        masked_image = image_manager.mask_image(image)
+        edged_image = image_manager.get_edged_image_from_masked_image(masked_image, 10, 700)
 
-            self.laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 112)
-            left_line_right_side_coordinates, right_line_left_side_coordinates = self.laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
+        self.laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 112)
+        left_line_right_side_coordinates, right_line_left_side_coordinates = self.laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
 
-            self.distances_presenter.image = masked_image
-            distances_list = self.distances_presenter.calculate_distances_between_laser_lines(
-                left_line_right_side_coordinates,
-                right_line_left_side_coordinates,
-                show_distances_on_image=True)
+        self.distances_presenter.image = masked_image
+        distances_list = self.distances_presenter.calculate_distances_between_laser_lines(
+            left_line_right_side_coordinates,
+            right_line_left_side_coordinates,
+            show_distances_on_image=False)
 
-            self.data_saver.save_distances_to_pickle_file(distances_list)
-            self.data_saver.generate_y_for_distances()
-            self.data_saver.generate_x_for_distances()
+        self.data_saver.save_distances_to_pickle_file(distances_list)
+        self.data_saver.generate_y_for_distances()
+        self.data_saver.generate_x_for_distances()
 
 
 if __name__ == "__main__":
