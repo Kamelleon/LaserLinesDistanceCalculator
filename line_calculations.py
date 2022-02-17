@@ -3,6 +3,8 @@ import line_calculations_errors
 import numpy as np
 
 
+
+
 class LaserLinesCalculator:
     def __init__(self):
         self.left_line = []
@@ -11,6 +13,8 @@ class LaserLinesCalculator:
         self.right_line_left_side_coordinates = []
 
     def get_side_coordinates_for_left_and_right_lines(self):
+        self.left_line_right_side_coordinates = []
+        self.right_line_left_side_coordinates = []
         self.get_left_line_right_side_coordinates()
         self.get_right_line_left_side_coordinates()
         self.trim_beginning_of_lines_coordinates()
@@ -20,10 +24,18 @@ class LaserLinesCalculator:
             self.right_line_left_side_coordinates)
         self.left_line_right_side_coordinates = np.array(self.left_line_right_side_coordinates)
         self.right_line_left_side_coordinates = np.array(self.right_line_left_side_coordinates)
+        self.left_line = []
+        self.right_line = []
         return self.left_line_right_side_coordinates, self.right_line_left_side_coordinates
 
     def find_coordinates_of_lines_from_edged_image(self, edged_image, middle_x_point_between_lines):
         indices = np.where(edged_image != [0])
+        # indices = copy.deepcopy(edged_image)
+        # indices = []
+        # for i in edged_image:
+        #     if any(i) != [0]:
+        #         indices.append(i)
+        # indices[edged_image!=[0]] = indices
         coordinates_of_edged_image = zip(indices[0], indices[1])  # First value is Y, second X
         for coordinate in coordinates_of_edged_image:
             y_coordinate = coordinate[0]
