@@ -8,22 +8,6 @@ from sys import platform, exit
 import time
 
 
-def timeit(method):
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-        if 'log_time' in kw:
-            name = kw.get('log_name', method.__name__.upper())
-            kw['log_time'][name] = int((te - ts) * 1000)
-        else:
-            print('%r  %2.2f ms' % \
-                  (method.__name__, (te - ts) * 1000))
-        return result
-
-    return timed
-
-
 class ImageManager:
     def __init__(self, save_frames_from_picamera_to_file=False, rotate_source_image=False):
         self.save_frames_from_picamera_to_file = save_frames_from_picamera_to_file
@@ -158,6 +142,7 @@ class DistancesPresenter:
         cv2.waitKey(0)
         self.orig = self.image.copy()
 
+
     def calculate_distances_between_laser_lines(self,
                                                 left_line_right_side_coordinates,
                                                 right_line_left_side_coordinates,
@@ -225,87 +210,28 @@ class DataSaver:
         self.distances_list.clear()
 
 
-class RpiCamera:
-    def __init__(self, camera_warmup_time=5, image_resolution=(1920, 1080), framerate=30):
-        try:
-            from picamera.array import PiRGBArray
-            from picamera import PiCamera
-        except ImportError:
-            print("PiCamera library not installed. Exiting...")
-            exit(1)
-        self.camera_warmup_time = camera_warmup_time
-        print("Connecting to PiCamera...")
-        self.camera = PiCamera()
-        self.camera.resolution = image_resolution
-        self.camera.framerate = framerate
-        print("Connected successfully. Warming up...")
-        self.raw_capture = PiRGBArray(self.camera, size=image_resolution)
-        time.sleep(camera_warmup_time)
-        print("PiCamera READY.")
-
-
-class DistanceMeasurementsMethods:
-    def __init__(self):
-        self.distances_presenter = DistancesPresenter()
-        self.data_saver = DataSaver()
-        self.laser_lines_calculator = LaserLinesCalculator()
-
-    def perform_distance_measurements_with_picamera(self):
-        image_manager = ImageManager(save_frames_from_picamera_to_file=True, rotate_source_image=True)
-        self.distances_presenter.referenced_object_real_width = 66
-        self.distances_presenter.referenced_object_pixel_width = 118
-        rpi = RpiCamera(camera_warmup_time=5)
-
-        for frame in rpi.camera.capture_continuous(rpi.raw_capture, format="bgr", use_video_port=True):
-            start = time.time()
-
-            image_array = frame.array
-            masked_image = image_manager.mask_image(image_array)
-            edged_image = image_manager.get_edged_image_from_masked_image(masked_image, 10, 700)
-
-            self.laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 120)
-            left_line_right_side_coordinates, right_line_left_side_coordinates = self.laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
-
-            self.distances_presenter.image = masked_image
-            distances_list = self.distances_presenter.calculate_distances_between_laser_lines(
-                left_line_right_side_coordinates,
-                right_line_left_side_coordinates,
-                show_distances_on_image=False)
-
-            self.data_saver.save_distances_to_pickle_file(distances_list)
-            self.data_saver.generate_y_for_distances()
-            self.data_saver.generate_x_for_distances()
-
-            rpi.raw_capture.truncate(0)
-
-            print("LOOP TIME:", time.time() - start)
-
-    def perform_distance_measurements_from_image_file(self):
-        image_manager = ImageManager(rotate_source_image=False)
-        image = cv2.imread("pelna_dlugosc.png")
-        self.distances_presenter.referenced_object_real_width = 66
-        self.distances_presenter.referenced_object_pixel_width = 118
-        # while True:
-        masked_image = image_manager.mask_image(image)
-        edged_image = image_manager.get_edged_image_from_masked_image(masked_image, 10, 700)
-
-        self.laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 112)
-        left_line_right_side_coordinates, right_line_left_side_coordinates = self.laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
-
-        self.distances_presenter.image = masked_image
-        distances_list = self.distances_presenter.calculate_distances_between_laser_lines(
-            left_line_right_side_coordinates,
-            right_line_left_side_coordinates,
-            show_distances_on_image=False)
-
-        self.data_saver.save_distances_to_pickle_file(distances_list)
-        self.data_saver.generate_y_for_distances()
-        self.data_saver.generate_x_for_distances()
-
-
 if __name__ == "__main__":
-    measurement_method = DistanceMeasurementsMethods()
-    if platform == "linux" or platform == "linux2":
-        measurement_method.perform_distance_measurements_with_picamera()
-    else:
-        measurement_method.perform_distance_measurements_from_image_file()
+
+    distances_presenter = DistancesPresenter()
+    distances_presenter.referenced_object_real_width = 66
+    distances_presenter.referenced_object_pixel_width = 118
+    image = cv2.imread("None.png")
+
+    image_manager = ImageManager(rotate_source_image=False)
+    masked_image = image_manager.mask_image(image)
+    edged_image = image_manager.get_edged_image_from_masked_image(masked_image, 10, 700)
+
+    laser_lines_calculator = LaserLinesCalculator()
+    laser_lines_calculator.find_coordinates_of_lines_from_edged_image(edged_image, 112)
+    left_line_right_side_coordinates, right_line_left_side_coordinates = laser_lines_calculator.get_side_coordinates_for_left_and_right_lines()
+
+    distances_presenter.image = masked_image
+    distances_list = distances_presenter.calculate_distances_between_laser_lines(
+        left_line_right_side_coordinates,
+        right_line_left_side_coordinates,
+        show_distances_on_image=True)
+
+    data_saver = DataSaver()
+    data_saver.save_distances_to_pickle_file(distances_list)
+    data_saver.generate_y_for_distances()
+    data_saver.generate_x_for_distances()
