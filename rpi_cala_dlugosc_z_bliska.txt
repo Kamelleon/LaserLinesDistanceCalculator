@@ -1,8 +1,0 @@
-6cm - wysokość kostki
-6cm między jedną linią lasera a drugą w rzeczywistości
-
-167 px - 60mm
-1px - 0.35mm
-
-Pomiar wyszedł źle z powodu krzywizny obu linii spowodowanych przez krzywy bret.
-Kolor zielony nie sprawdził się do pomiaru
