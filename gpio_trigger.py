@@ -4,6 +4,7 @@ class GPIOTrigger:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(5, GPIO.OUT)
         self.button_pressed = False
 
     def check_button_press(self):
@@ -15,3 +16,9 @@ class GPIOTrigger:
             self.button_pressed = True
 
         return self.button_pressed
+
+    def turn_off_lasers(self):
+        GPIO.output(5, GPIO.LOW)
+
+    def turn_on_lasers(self):
+        GPIO.output(5, GPIO.HIGH)

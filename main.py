@@ -9,6 +9,7 @@ from gpio_trigger import GPIOTrigger
 from time import time, sleep
 
 
+
 def image_processor(image, number_of_scan, pickle_distances_saver):
     masked_frame, edged_frame = image_manipulator.preprocess_frame(image, get_masked_frame=True)
 
@@ -54,9 +55,22 @@ if __name__ == "__main__":
 
     gpio_trigger = GPIOTrigger()
     trigger_check_delay = 0.2
+    lasers_disabled = False
 
     while True:
-        # if gpio_trigger.check_button_press():
+        with open("status.txt", "r") as f:
+            status = f.readline()
+            print(status)
+        if str(status) == "disabled":
+            print("disabled")
+            if not lasers_disabled:
+                gpio_trigger.turn_off_lasers()
+                lasers_disabled = True
+            else:
+                sleep(0.5)
+        else:
+            gpio_trigger.turn_on_lasers()
+            lasers_disabled = False
             try:
                 rpi_camera.start_recording()
                 start = time()
