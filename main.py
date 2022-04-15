@@ -64,12 +64,10 @@ if __name__ == "__main__":
         if str(status) == "disabled":
             print("disabled")
             if not lasers_disabled:
-                gpio_trigger.turn_off_lasers()
                 lasers_disabled = True
             else:
                 sleep(0.5)
         else:
-            gpio_trigger.turn_on_lasers()
             lasers_disabled = False
             try:
                 rpi_camera.start_recording()
