@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
+GPIO.setwarnings(False)
+
 class GPIOTrigger:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)

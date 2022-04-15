@@ -1,32 +1,44 @@
+import traceback
 import dash
-import dash_core_components as dcc
+from dash import dcc
 import dash_daq as daq
 from dash.dependencies import Output, Input, State
-import dash_html_components as html
+from dash import html
 from math import floor
+from dash import callback_context
 import pickle
 import time
 import plotly.express as px
 from gpio_trigger import GPIOTrigger
 from pathlib import Path
+import os
 
 X = pickle.load(open("x.pkl", "rb"))
 movement = pickle.load(open("y.pkl", "rb"))
 distance = pickle.load(open('distances.pkl', 'rb'))
+
 gpio_trigger = GPIOTrigger()
-app = dash.Dash(__name__, prevent_initial_callbacks=True, update_title=None)
 
-# Website title
-app.title = 'Pomiar wysokości kostki'
+website = dash.Dash(__name__, prevent_initial_callbacks=True, update_title="Aktualizowanie wykresu...")
+website.title = 'Pomiar wysokości kostki'
 
-
+measurements_turned_on_text = "WŁĄCZONY"
+measurements_turned_off_text = "WYŁĄCZONY"
+choosed_brick = "Kostka 60mm"
+measurements_status_file = "status.txt"
+color_range = [53,67]
 def serve_layout():
-    with open("status.txt", "r") as f:
-        status = f.readline()
-    if status == "enabled":
-        status = "WŁĄCZONE"
-    elif status == "disabled":
-        status = "WYŁĄCZONE"
+    try:
+        with open(measurements_status_file, "r") as f:
+            measurements_status = f.readline()
+        if measurements_status == "enabled":
+            measurements_status = measurements_turned_on_text
+        else:
+            measurements_status = measurements_turned_off_text
+    except:
+        print(traceback.print_exc())
+        print(f"Nie znaleziono pliku {measurements_status_file}")
+        os._exit(1)
 
     return (
         html.Div(
@@ -40,13 +52,23 @@ def serve_layout():
                                  "display": "inline-block"}),
 
                 html.Div(children=[
-                    html.P("Stan laserów pomiarowych:",
+                    html.P("Status pomiaru wysokości kostki:",
                            style={"text-align": "center"}),
-                    html.P(status, id="plot-update-status", style={"text-align": "center", "font-size": "5vh"}),
+                    html.P(measurements_status, id="plot-update-status",
+                           style={"text-align": "center", "font-size": "5vh"}),
+
                     html.Div(children=[html.Button("Przełącz lasery pomiarowe",
                                                    id='start-stop-plot-updates-button')],
                              style={"text-align": "center"}),
-
+                    html.P("Wybrana kostka:",
+                           style={"text-align": "center", "font-size": "3vh"}),
+                    html.P(choosed_brick,id="choosed-brick"),
+                    html.Div(children=[html.Button("Kostka 60mm",
+                                id='kostka-60-button'),
+                    html.Button("Kostka 80mm",
+                                id='kostka-80-button'),
+                    html.Button("Kostka 100mm",
+                                id='kostka-100-button')],style={"text-align": "center"}),
                     html.P("Prawidłowa wartość dystansu i tolerancja:"),
                     html.Div(children=[
                         dcc.Input(id="correct-distance-value",
@@ -58,7 +80,6 @@ def serve_layout():
                                   placeholder="Tolerancja",
                                   style={"width": "4.2vw"})],
                         style={'text-align': 'center'}),
-
 
                     html.Br(),
 
@@ -125,9 +146,9 @@ def serve_layout():
                                100: "100"},
                         value=55,
                     )], style={"float": "right",
-                                 "width": "25vw",
-                                 "height": "20vw",
-                                 "margin-right": "120px"}),
+                               "width": "25vw",
+                               "height": "20vw",
+                               "margin-right": "120px"}),
 
                 dcc.Interval
                     (
@@ -149,98 +170,29 @@ def serve_layout():
     )
 
 
-app.layout = serve_layout
+website.layout = serve_layout
 
 
-# @app.callback(Output("plot-update-parent", "children"),
-#             [Input('update-interval', 'n_intervals')])
-# def status_changer(input_data):
-#     with open("status.txt","r") as f:
-#         status = f.readline()
-#     if status == "enabled":
-#         status = "WŁĄCZONA"
-#     elif status == "disabled":
-#         status = "WYŁĄCZONA"
-#     print(status)
-#     return [html.P(status,
-#                         id='plot-update-status',
-#                         style={
-#                             "text-align": "center",
-#                             "font-size": "30px"})]
-
-@app.callback(
+@website.callback(
     Output('plot-update-status', 'children'),
     Input('plot-update-status', 'children'),
     Input('start-stop-plot-updates-button', 'n_clicks'),
 )
-def change_plot_updates_status_text(status_text, number_of_clicks):
-    if type(number_of_clicks) == int:
-        if status_text == "WŁĄCZONE":
-            with open("status.txt", "w") as f:
+def change_plot_updates_status_text(measurements_status_text, number_of_clicks):
+    if isinstance(number_of_clicks, int):
+        if measurements_status_text == measurements_turned_on_text:
+            with open(measurements_status_file, "w") as f:
                 f.write("disabled")
             gpio_trigger.turn_off_lasers()
-            return "WYŁĄCZONE"
-        else:
-            with open("status.txt", "w") as f:
+            return measurements_turned_off_text
+        elif measurements_status_text == measurements_turned_off_text:
+            with open(measurements_status_file, "w") as f:
                 f.write("enabled")
             gpio_trigger.turn_on_lasers()
-            return "WŁĄCZONE"
-        #
-        # if number_of_clicks % 2 == 0:
-        #     with open("status.txt", "w") as f:
-        #         f.write("enabled")
-        #     return "WŁĄCZONA",\
-        #            {"color": "green",
-        #             "text-align": "center",
-        #             "font-size": "30px"}
-        # else:
-        #     with open("status.txt", "w") as f:
-        #         f.write("disabled")
-        #     return "WYŁĄCZONA",\
-        #            {"color": "red",
-        #             "text-align": "center",
-        #             "font-size": "30px"}
+            return measurements_turned_on_text
 
 
-# @app.callback(
-#     Output('update-interval', 'disabled'),
-#
-#     Input('plot-update-status', 'children'),
-#
-#     State('update-interval', 'disabled'),
-# )
-# def enable_disable_plot_updates(status_text, disabled_state):
-#     if status_text == "WŁĄCZONA":
-#         print(status_text)
-#         return not disabled_state
-#     else:
-#         print(status_text)
-#         return disabled_state
-
-
-@app.callback(
-    Output('average-distance-attention', 'children'),
-
-    Input('correct-distance-value', 'value')
-)
-def average_distance_alert(correct_distance_value):
-    if type(correct_distance_value) == int:
-        if correct_distance_value > 0:
-            if round(sum(distance) / len(distance)) > correct_distance_value:
-                return "UWAGA: Średnia z dystansu (" + str(
-                    round(sum(distance) / len(distance))) + ") jest wyższa niż podana " \
-                                                            "prawidłowa wartość dystansu!"
-            elif round(sum(distance) / len(distance)) < correct_distance_value:
-                return "UWAGA: Średnia z dystansu (" + str(
-                    round(sum(distance) / len(distance))) + ") jest niższa niż podana " \
-                                                            "prawidłowa wartość dystansu!"
-            else:
-                return ""
-        else:
-            return ""
-
-
-@app.callback(
+@website.callback(
     Output('plot', 'figure'),
     Output('plot', 'style'),
     Output('average-distance', 'children'),
@@ -250,18 +202,30 @@ def average_distance_alert(correct_distance_value):
     Output('right-upper', 'children'),
     Output('update-interval', 'disabled'),
 
+    Input('kostka-60-button', 'n_clicks'),
+    Input('kostka-80-button', 'n_clicks'),
+    Input('kostka-100-button', 'n_clicks'),
     Input('plot-update-status', 'children'),
     Input('update-interval', 'n_intervals'),
-    Input('color-range-slider', 'value'),
-
     Input('point-size-slider', 'value'),
     Input("plot-height-slider", "value"),
     Input('correct-distance-value', 'value'),
     Input('tolerance-value', 'value'),
     State('update-interval', 'disabled'))
-def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
+def update_graph_scatter(brick_60_button_click,brick_80_button_click,brick_100_button_click,measurements_status_text, n, point_size, height_slider,
                          correct_distance_value, tolerance, disabled_state):
-    if status_text == "WŁĄCZONE":
+    trigger = callback_context.triggered[0]
+    print("You clicked button {}".format(trigger["prop_id"].split(".")[0]))
+    if "kostka-60-button" in trigger["prop_id"].split(".")[0]:
+        color_range[0] = 53
+        color_range[1] = 67
+    if "kostka-80-button" in trigger["prop_id"].split(".")[0]:
+        color_range[0] = 73
+        color_range[1] = 87
+    if "kostka-100-button" in trigger["prop_id"].split(".")[0]:
+        color_range[0] = 93
+        color_range[1] = 107
+    if measurements_status_text == measurements_turned_on_text:
         disabled_state = False
     else:
         disabled_state = True
@@ -295,24 +259,30 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                 distance[movement.index(1) - 1]) <= correct_distance_value) \
                     or (correct_distance_value + tolerance >= floor(
                 distance[movement.index(1) - 1]) >= correct_distance_value):
-                fig.add_annotation(x=X[movement.index(1) - 1],
-                                   y=movement[movement.index(1) - 1],
+                fig.add_annotation(x=X[-1],
+                                   y=movement[0],
                                    text=round(distance[movement.index(1) - 1], 2),
                                    showarrow=True,
                                    arrowhead=3,
+                                   ax=20,
+                                   ay=50,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
                                        size=18,
-                                       color="black"
+                                       color="white"
                                    ),
                                    )
             else:
-                fig.add_annotation(x=X[movement.index(1) - 1],
-                                   y=movement[movement.index(1) - 1],
+                fig.add_annotation(x=X[-1],
+                                   y=movement[0],
                                    text=round(distance[movement.index(1) - 1], 2),
                                    showarrow=True,
+                                   ax=20,
+                                   ay=50,
                                    arrowhead=3,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
@@ -328,12 +298,15 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    y=movement[0],
                                    text=round(distance[0], 2),
                                    arrowhead=3,
+                                   ax=20,
+                                   ay=50,
                                    showarrow=True,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
                                        size=18,
-                                       color="black"
+                                       color="white"
                                    ),
                                    )
             else:
@@ -341,6 +314,9 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    y=movement[0],
                                    text=round(distance[0], 2),
                                    arrowhead=3,
+                                   arrowcolor="#ffffff",
+                                   ax=20,
+                                   ay=50,
                                    showarrow=True,
                                    font=dict
                                        (
@@ -359,12 +335,13 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    y=movement[-1],
                                    text=round(distance[movement.index(movement[-1])], 2),
                                    showarrow=True,
+                                   arrowcolor="#ffffff",
                                    arrowhead=3,
                                    font=dict
                                        (
                                        family="Arial",
                                        size=18,
-                                       color="black"
+                                       color="white"
                                    ),
                                    )
             else:
@@ -373,6 +350,7 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    text=round(distance[movement.index(movement[-1])], 2),
                                    showarrow=True,
                                    arrowhead=3,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
@@ -389,11 +367,12 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    text=round(distance[-1], 2),
                                    showarrow=True,
                                    arrowhead=3,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
                                        size=18,
-                                       color="black"
+                                       color="white"
                                    ),
                                    )
             else:
@@ -402,6 +381,7 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                                    text=round(distance[-1], 2),
                                    showarrow=True,
                                    arrowhead=3,
+                                   arrowcolor="#ffffff",
                                    font=dict
                                        (
                                        family="Arial",
@@ -413,15 +393,14 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
                       xaxis_title="Rząd",
                       yaxis_title="Oś Y",
                       legend_title="Legenda")
-    fig.update_layout(xaxis=dict(showgrid=False,zeroline=False),
-                      yaxis=dict(showgrid=False,zeroline=False))
+    fig.update_layout(xaxis=dict(showgrid=False, zeroline=False),
+                      yaxis=dict(showgrid=False, zeroline=False))
 
-
-    fig.update_xaxes(autorange="reversed")
+    # fig.update_xaxes(autorange="reversed")
 
     return fig, \
            {'height': str(height_slider) + "vw",
-            'width': "57vw",
+            'width': "59vw",
             "display": "inline-block"}, \
            "Średnia z dystansu: " + str(round(sum(distance) / len(distance))), \
            "Wartość w prawym dolnym rogu wykresu: ", \
@@ -431,8 +410,8 @@ def update_graph_scatter(status_text, n, color_range, point_size, height_slider,
            disabled_state
 
 
-@app.callback(Output('color-range-slider-output-text', 'children'),
-              Input('color-range-slider', 'value'))
+@website.callback(Output('color-range-slider-output-text', 'children'),
+                  Input('color-range-slider', 'value'))
 def display_color_range_slider_value(color_range_slider_value):
     slider_min_val = float(color_range_slider_value[0])
     slider_max_val = float(color_range_slider_value[1])
@@ -443,4 +422,4 @@ def display_color_range_slider_value(color_range_slider_value):
 
 if __name__ == '__main__':
     print("[~] Starting server")
-    app.run_server(host="0.0.0.0")
+    website.run_server(host="0.0.0.0")
