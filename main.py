@@ -9,7 +9,6 @@ from gpio_trigger import GPIOTrigger
 from time import time, sleep
 
 
-
 def image_processor(image, number_of_scan, pickle_distances_saver):
     masked_frame, edged_frame = image_manipulator.preprocess_frame(image, get_masked_frame=True)
 
@@ -33,6 +32,7 @@ def image_processor(image, number_of_scan, pickle_distances_saver):
 
 
 if __name__ == "__main__":
+    lasers_status_file = "lasers_status.info"
 
     image_manipulator = ImageManipulator()
 
@@ -50,33 +50,26 @@ if __name__ == "__main__":
                                  mp4_video_name='video.mp4')
 
     mp4_video_reader = VideoReader(video_name=rpi_camera.mp4_video_name,
-                                   frames_to_process=[90,91,92,93,94,95,96,97,98,99,100],
+                                   frames_to_process=[90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100],
                                    save_frames_to_process_to_file=True)
 
     gpio_trigger = GPIOTrigger()
-    trigger_check_delay = 0.2
+    gpio_check_delay = 0.15
     lasers_disabled = False
 
     while True:
-        with open("status.txt", "r") as f:
-            status = f.readline()
-            print(status)
-        if str(status) == "disabled":
-            print("disabled")
-            if not lasers_disabled:
-                lasers_disabled = True
-            else:
-                sleep(0.5)
-        else:
-            lasers_disabled = False
+        lasers_status = gpio_trigger.get_lasers_status()
+        sensor_is_cut = gpio_trigger.check_cut_sensor()
+        if lasers_status == "enabled" and sensor_is_cut:
             try:
                 rpi_camera.start_recording()
-                start = time()
+                start_time = time()
                 mp4_video_reader.read_frames_from_video_and_process_them(image_processor)
-                print("FULL LOOP TIME:", time() - start, "sec")
+                print("FULL LOOP TIME:", time() - start_time, "sec.")
             except KeyboardInterrupt:
                 break
             except:
                 print(traceback.print_exc())
-        # else:
-        #     sleep(trigger_check_delay)
+                continue
+        else:
+            sleep(gpio_check_delay)

@@ -2,8 +2,10 @@ from sys import platform
 import picamera
 from subprocess import call
 import os
+
+
 class RaspberryCamera:
-    def __init__(self, resolution=(1920, 1080), frame_rate=30, recording_time=5, mp4_video_name='video.mp4'):
+    def __init__(self, resolution=(1920, 1088), frame_rate=30, recording_time=5, mp4_video_name='video.mp4'):
         if platform == "win32" or platform == "darwin":
             raise OSNotSupportedError("Only Linux systems are supported (especially Raspberry Pi 3 or 4)")
         self.resolution = resolution
