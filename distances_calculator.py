@@ -83,8 +83,8 @@ class DistancesCalculator:
                                                             right_line_left_side_coordinates):
             distance_sampling_position += 1
             if distance_sampling_position % self.distance_sampling_value == 0:
-                # if self.yA == 0 or self.yB == 0:
-                #     continue
+                if self.yA == 0 or self.yB == 0:
+                    continue
 
                 self.euclidean_distance_between_two_lines = dist.euclidean((int(self.xA), int(self.yA)),
                                                                            (int(self.xB),

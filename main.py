@@ -38,19 +38,20 @@ if __name__ == "__main__":
 
     pickle_data_saver = PickleDistancesSaver()
 
-    distances_calculator = DistancesCalculator(referenced_object_real_width=66,
-                                               referenced_object_pixel_width=117.2,
-                                               distance_sampling_multiplier=90)
+    distances_calculator = DistancesCalculator(referenced_object_real_width=62,
+                                               referenced_object_pixel_width=112,
+                                               distance_sampling_multiplier=60)
 
-    laser_lines_finder = LaserLinesCoordinatesFinder(middle_x_point_between_lines=103)
+    # laser_lines_finder = LaserLinesCoordinatesFinder(middle_x_point_between_lines=700)
+    laser_lines_finder = LaserLinesCoordinatesFinder(middle_x_point_between_lines=673)
 
     rpi_camera = RaspberryCamera(resolution=(1920, 1088),
                                  frame_rate=30,
-                                 recording_time=5,
+                                 recording_time=4,
                                  mp4_video_name='video.mp4')
 
     mp4_video_reader = VideoReader(video_name=rpi_camera.mp4_video_name,
-                                   frames_to_process=[90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100],
+                                   frames_to_process=[7, 8, 9],
                                    save_frames_to_process_to_file=True)
 
     gpio_trigger = GPIOTrigger()
@@ -60,6 +61,7 @@ if __name__ == "__main__":
     while True:
         lasers_status = gpio_trigger.get_lasers_status()
         sensor_is_cut = gpio_trigger.check_cut_sensor()
+        # sensor_is_cut = True
         if lasers_status == "enabled" and sensor_is_cut:
             try:
                 rpi_camera.start_recording()

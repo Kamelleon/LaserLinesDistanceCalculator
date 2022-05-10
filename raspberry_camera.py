@@ -22,6 +22,7 @@ class RaspberryCamera:
             camera.resolution = self.resolution
             camera.framerate = self.frame_rate
             camera.start_recording(self.h264_video_name)
+            camera.iso = 1
             camera.wait_recording(self.recording_time)
             camera.stop_recording()
 

@@ -53,17 +53,19 @@ class LaserLinesCoordinatesFinder:
                 self.right_line.append([y_coordinate, x_coordinate])
 
         if len(self.right_line) == 0:
-            raise NoCoordinatesFoundError(
-                "No coordinates found for the right line. It may be due to the following reasons:"
-                "- Miiddle point between two lines is wrongly set"
-                "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
-                "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
+            print("blad")
+            # raise NoCoordinatesFoundError(
+            #     "No coordinates found for the right line. It may be due to the following reasons:"
+            #     "- Miiddle point between two lines is wrongly set"
+            #     "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
+             #   "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
         if len(self.left_line) == 0:
-            raise NoCoordinatesFoundError(
-                "No coordinates found for the left line. It may be due to the following reasons:"
-                "- Middle point between two lines is wrongly set"
-                "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
-                "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
+            print("blad")
+            # raise NoCoordinatesFoundError(
+            #     "No coordinates found for the left line. It may be due to the following reasons:"
+            #     "- Middle point between two lines is wrongly set"
+            #     "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
+            #     "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
         return self.left_line, self.right_line
 
     def get_left_line_right_side_coordinates(self):
@@ -77,11 +79,12 @@ class LaserLinesCoordinatesFinder:
         if len(self.left_line_right_side_coordinates) > 0:
             return self.left_line_right_side_coordinates
         else:
-            raise NoCoordinatesFoundError(
-                "No coordinates found for the left line right side coordinates. It may be due to the following reasons:"
-                "- Middle point between two lines is wrongly set"
-                "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
-                "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
+            print("blad")
+            # raise NoCoordinatesFoundError(
+            #     "No coordinates found for the left line right side coordinates. It may be due to the following reasons:"
+            #     "- Middle point between two lines is wrongly set"
+            #     "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
+            #     "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
 
     def get_right_line_left_side_coordinates(self):
         reversed_right_line_coordinates = list(reversed(self.right_line))
@@ -96,11 +99,12 @@ class LaserLinesCoordinatesFinder:
         if len(self.right_line_left_side_coordinates) > 0:
             return self.right_line_left_side_coordinates
         else:
-            raise NoCoordinatesFoundError(
-                "No coordinates found for the right line left side coordinates. Check your middle point between two lines."
-                "- Middle point between two lines is wrongly set"
-                "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
-                "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
+            print("blad")
+            # raise NoCoordinatesFoundError(
+            #     "No coordinates found for the right line left side coordinates. Check your middle point between two lines."
+            #     "- Middle point between two lines is wrongly set"
+            #     "- Mask is wrongly set (maybe try with white mask or change values of current mask)"
+            #     "- The image doesn't show laser lines. Consider turning on the raw frame saving option to see what camera currently captures.")
 
     @staticmethod
     def add_blank_brackets_for_missing_coords(line_side_coordinates_list):
