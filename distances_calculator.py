@@ -15,7 +15,7 @@ class DistancesCalculator:
         self.line_thickness = 2
         self.circle_color = (255, 0, 0)
         self.circle_size = 2
-        self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.font = cv2.FONT_HERSHEY_DUPLEX
 
         self._pixel_per_metric = 1
 

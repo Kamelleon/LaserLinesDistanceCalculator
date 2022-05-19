@@ -3,23 +3,23 @@ from numpy import array
 
 
 class ImageManipulator:
-    def __init__(self):
+    def __init__(self, frame):
         self.MASK_NAMES = ["green", "white"]
+        self.frame = frame
+        self.lower_green_mask = array([36,0,0])
+        # # self.lower_green_mask = array([10, 80, 70])# W RAZIE POTRZEBY ZMIENIAĆ TYLKO LOWER MASK (WSZYSTKIE 3 WARTOŚCI)
+        # # self.lower_green_mask = array([5, 20, 110])
+        # # self.lower_green_mask = array([0, 20, 110]),
+        self.upper_green_mask = array([86,255,255])
 
-        self.lower_green_mask = array([0, 0, 80])
-        # self.lower_green_mask = array([10, 80, 70])# W RAZIE POTRZEBY ZMIENIAĆ TYLKO LOWER MASK (WSZYSTKIE 3 WARTOŚCI)
-        # self.lower_green_mask = array([5, 20, 110])
-        # self.lower_green_mask = array([0, 20, 110])
-        self.upper_green_mask = array([179, 255, 255])
+        # self.sensitivity = 190
+        # self.lower_green_mask = array([0, 0, 255 - self.sensitivity])
+        # self.upper_green_mask = array([255, self.sensitivity, 255])
 
-        # self.sensitivity = 20
-        # self.lower_white_mask = array([0, 0, 255 - self.sensitivity])
-        # self.upper_white_mask = array([255, self.sensitivity, 255])
+    def preprocess_frame(self, min_threshold_for_edge_detection=10,max_threshold_for_edge_detection=1000, get_masked_frame=True):
 
-    def preprocess_frame(self, frame, min_threshold_for_edge_detection=30,max_threshold_for_edge_detection=255, get_masked_frame=True):
-
-        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-        masked_frame = self.apply_mask(frame)
+        self.frame = cv2.rotate(self.frame, cv2.ROTATE_90_CLOCKWISE)
+        masked_frame = self.apply_mask(self.frame)
         cv2.imwrite("preprocessed_frame.jpg",masked_frame)
         edged_frame = self.get_edged_frame(masked_frame, min_threshold=min_threshold_for_edge_detection,max_threshold=max_threshold_for_edge_detection)
         cv2.imwrite("edged_frame.jpg",edged_frame)
@@ -50,3 +50,9 @@ class ImageManipulator:
         edged = cv2.dilate(edged, None, iterations=1)
         edged = cv2.erode(edged, None, iterations=1)
         return edged
+
+frame = cv2.imread("Frame_50.jpg")
+image_manipulator = ImageManipulator(frame)
+masked, edged = image_manipulator.preprocess_frame()
+cv2.imwrite("masked.jpg",masked)
+cv2.imwrite("edged.jpg",edged)

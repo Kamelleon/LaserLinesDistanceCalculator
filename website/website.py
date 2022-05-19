@@ -32,7 +32,7 @@ class Plot:
     color_scheme = "rdbu_r"
     color_range = [53, 67]
     marker = 'square'
-    background_color = 'rgba(0, 0, 0, 255)'
+    background_color = 'rgba(186, 186, 186, 255)'
     background_grid = False
     reversed_xaxes = True
 
@@ -72,59 +72,19 @@ def website_layout():
                     html.P("Status laserów pomiarowych:",
                            style={"text-align": "center"}),
                     html.P(lasers_status, id="lasers-status",
-                           style={"text-align": "center", "font-size": "5vh","color":status_color}),
+                           style={"text-align": "center", "font-size": "5vh", "color": status_color}),
 
                     html.Div(children=[html.Button("Przełącz lasery pomiarowe",
                                                    id='turn-off-on-lasers')],
                              style={"text-align": "center"}),
                     html.Br(),
                     html.Hr(),
-                    html.P("Wybrana kostka:",
-                           style={"text-align": "center", "font-size": "2vh", "margin-top": "2vh"}),
-                    html.P(default_selected_brick, id="choosed-brick-height",
-                           style={"text-align": "center", "font-size": "4vh", "padding": "0px"}),
-                    html.Div(children=[html.Button("Kostka 60mm",
-                                                   id='kostka-60mm-button'),
-                                       html.Button("Kostka 80mm",
-                                                   id='kostka-80mm-button'),
-                                       html.Button("Kostka 100mm",
-                                                   id='kostka-100mm-button')], style={"text-align": "center"}),
                     html.Br(),
-                    html.Hr(),
-                    html.P("Prawidłowa wysokość i tolerancja:"),
-                    html.Div(children=[
-                        dcc.Input(id="correct-distance-value",
-                                  type="number",
-                                  placeholder="Prawidłowa wysokość",
-                                  style={"width": "10vw"}),
-                        dcc.Input(id='tolerance-value',
-                                  type='number',
-                                  placeholder="Tolerancja",
-                                  style={"width": "4.2vw"})],
-                        style={'text-align': 'center'}),
-
+                    html.P(id="average-distance"),
                     html.Br(),
-
+                    html.P(id="max-distance"),
                     html.Br(),
-
-                    html.P("Rozmiar punktów wykresu:"),
-                    dcc.Slider
-                        (
-                        id='point-size-slider',
-                        min=1,
-                        max=40,
-                        step=1,
-                        marks={1: '1',
-                               5: '5',
-                               10: '10',
-                               15: '15',
-                               20: '20',
-                               25: '25',
-                               30: '30',
-                               35: '35',
-                               40: '40'},
-                        value=13,
-                    )
+                    html.P(id="min-distance"),
 
                 ], style={"float": "right",
                           "width": "25vw",
@@ -141,7 +101,6 @@ def website_layout():
 
                 html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
 
-                html.P(id="average-distance"),
             ], style={"font-family": "Bahnschrift"}
         )
     )
@@ -163,62 +122,61 @@ def change_plot_updates_status_text(lasers_status, number_of_clicks):
 
     if lasers_are_enabled:
         lasers.turn_off()
-        return lasers.turned_off_text, {"text-align": "center", "font-size": "5vh","color":"red"}
+        return lasers.turned_off_text, {"text-align": "center", "font-size": "5vh", "color": "red"}
     elif lasers_are_disabled:
         lasers.turn_on()
-        return lasers.turned_on_text, {"text-align": "center", "font-size": "5vh","color":"green"}
-
-
-@website.callback(
-    Output('choosed-brick-height', "children"),
-
-    Input('kostka-60mm-button', 'n_clicks'),
-    Input('kostka-80mm-button', 'n_clicks'),
-    Input('kostka-100mm-button', 'n_clicks'),
-)
-def brick_height_changer(b1, b2, b3):
-    trigger = callback_context.triggered[0]
-    print("You clicked button {}".format(trigger["prop_id"].split(".")[0]))
-    if "kostka-60mm-button" in trigger["prop_id"].split(".")[0]:
-        Plot.color_range[0] = Plot.color_range_for_60mm_brick[0]
-        Plot.color_range[1] = Plot.color_range_for_60mm_brick[1]
-        kostka = "Kostka 60mm"
-    elif "kostka-80mm-button" in trigger["prop_id"].split(".")[0]:
-        Plot.color_range[0] = Plot.color_range_for_80mm_brick[0]
-        Plot.color_range[1] = Plot.color_range_for_80mm_brick[1]
-        kostka = "Kostka 80mm"
-    elif "kostka-100mm-button" in trigger["prop_id"].split(".")[0]:
-        Plot.color_range[0] = Plot.color_range_for_100mm_brick[0]
-        Plot.color_range[1] = Plot.color_range_for_100mm_brick[1]
-        kostka = "Kostka 100mm"
-    else:
-        kostka = "-"
-
-    return kostka
+        return lasers.turned_on_text, {"text-align": "center", "font-size": "5vh", "color": "green"}
 
 
 @website.callback(
     Output('plot', 'figure'),
     Output('plot', 'style'),
     Output('average-distance', 'children'),
+    Output('max-distance', 'children'),
+    Output('min-distance', 'children'),
 
     Input('update-interval', 'n_intervals'),
-    Input('point-size-slider', 'value'),
-    Input('correct-distance-value', 'value'),
-    Input('tolerance-value', 'value'),
 
     State('update-interval', 'disabled'))
-def update_graph_scatter(n, point_size,
-                         correct_distance_value, tolerance, disabled_state):
+def update_graph_scatter(n, disabled_state):
     try:
         X = pickle.load(open(x_data, "rb"))
         y = pickle.load(open(y_data, "rb"))
         distance = pickle.load(open(distances_data, 'rb'))
+        #y = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+        #     29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]
+        #X = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        #     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        #distance = [63, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+        #            60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+        #            60, 60, 60, 57]
+        #distance = [84,80,80,80,80,75,74,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,80,75]
     except Exception:
-        X =  [0]
+        X = [0]
         y = [0]
         distance = [0]
         print("[-] Failed to load Pickle files")
+
+    distances_sum = sum(distance)
+    max_distance = max(distance)
+    min_distance = min(distance)
+    brick_height = distances_sum / len(distance)
+
+    if brick_height > 50 and brick_height < 70:
+        # brick_height = 60
+        Plot.color_range[0] = Plot.color_range_for_60mm_brick[0]
+        Plot.color_range[1] = Plot.color_range_for_60mm_brick[1]
+    elif brick_height > 70 and brick_height < 90:
+        # brick_height = 80
+        Plot.color_range[0] = Plot.color_range_for_80mm_brick[0]
+        Plot.color_range[1] = Plot.color_range_for_80mm_brick[1]
+    elif brick_height > 90 and brick_height < 110:
+        # brick_height = 100
+        Plot.color_range[0] = Plot.color_range_for_100mm_brick[0]
+        Plot.color_range[1] = Plot.color_range_for_100mm_brick[1]
+    else:
+        brick_height = 0
+
     plot = px.scatter(
         x=X,
         y=y,
@@ -227,149 +185,69 @@ def update_graph_scatter(n, point_size,
         range_color=[plot_color_range[0], plot_color_range[1]],
         labels=dict(x=Plot.x_label, y=Plot.y_label, color=Plot.color_label)
     )
-    plot.update_traces(marker=dict(size=point_size, symbol='square'),
+    plot.update_traces(marker=dict(size=13, symbol='square'),
                        selector=dict(mode='markers'),
                        )
 
-    if type(correct_distance_value) == int and type(tolerance) == int:
+    previous_line_values = (-1, -1, -1)
 
-        if correct_distance_value > 0:
+    for line_number, y_coord, distance_value in zip(X, y, distance):
+        previous_y_coord = previous_line_values[1]
+        if distance_value > (brick_height + 2) or distance_value < (brick_height - 2):
+            color = "red"
+        else:
+            color = "black"
+        if y_coord == 25 or y_coord == 13 or y_coord == 38:
+            plot.add_annotation(x=line_number,
+                                y=y_coord,
+                                text=distance_value,
+                                ax=0,
+                                ay=0,
+                                font=dict
+                                    (
+                                    family="Arial",
+                                    size=20,
+                                    color=color
+                                ),
+                                )
+        elif y_coord == 0:
+            plot.add_annotation(x=line_number,
+                                y=y_coord,
+                                text=distance_value,
+                                ax=0,
+                                ay=20,
+                                font=dict
+                                    (
+                                    family="Arial",
+                                    size=20,
+                                    color=color
+                                ),
+                                )
 
-            if floor(distance[y.index(1) - 1]) == correct_distance_value \
-                    or (correct_distance_value - tolerance <= floor(
-                distance[y.index(1) - 1]) <= correct_distance_value) \
-                    or (correct_distance_value + tolerance >= floor(
-                distance[y.index(1) - 1]) >= correct_distance_value):
-                plot.add_annotation(x=X[-1],
-                                    y=y[0],
-                                    text=round(distance[y.index(1) - 1], 2),
-                                    showarrow=True,
-                                    arrowhead=3,
-                                    ax=20,
-                                    ay=50,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="white"
-                                    ),
-                                    )
-            else:
-                plot.add_annotation(x=X[-1],
-                                    y=y[0],
-                                    text=round(distance[y.index(1) - 1], 2),
-                                    showarrow=True,
-                                    ax=20,
-                                    ay=50,
-                                    arrowhead=3,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="red"
-                                    ),
-                                    )
+        if y_coord < previous_y_coord or (X[-1], y[-1], distance[-1]) == (line_number, y_coord, distance_value):
+            x_value = previous_line_values[0]
+            y_value = previous_line_values[1]
+            text_value = previous_line_values[2]
 
-            if floor(distance[0]) == correct_distance_value \
-                    or (correct_distance_value - tolerance <= floor(distance[0]) <= correct_distance_value) \
-                    or (correct_distance_value + tolerance >= floor(distance[0]) >= correct_distance_value):
-                plot.add_annotation(x=X[0],
-                                    y=y[0],
-                                    text=round(distance[0], 2),
-                                    arrowhead=3,
-                                    ax=20,
-                                    ay=50,
-                                    showarrow=True,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="white"
-                                    ),
-                                    )
-            else:
-                plot.add_annotation(x=X[0],
-                                    y=y[0],
-                                    text=round(distance[0], 2),
-                                    arrowhead=3,
-                                    arrowcolor="#ffffff",
-                                    ax=20,
-                                    ay=50,
-                                    showarrow=True,
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="red"
-                                    ),
-                                    )
+            if (X[-1], y[-1], distance[-1]) == (line_number, y_coord, distance_value):
+                x_value = line_number
+                y_value = y_coord
+                text_value = distance_value
 
-            if floor(distance[y.index(y[-1])]) == correct_distance_value \
-                    or (correct_distance_value - tolerance <= floor(
-                distance[y.index(y[-1])]) <= correct_distance_value) \
-                    or (correct_distance_value + tolerance >= floor(
-                distance[y.index(y[-1])]) >= correct_distance_value):
-                plot.add_annotation(x=X[y.index(y[-1])],
-                                    y=y[-1],
-                                    text=round(distance[y.index(y[-1])], 2),
-                                    showarrow=True,
-                                    arrowcolor="#ffffff",
-                                    arrowhead=3,
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="white"
-                                    ),
-                                    )
-            else:
-                plot.add_annotation(x=X[y.index(y[-1])],
-                                    y=y[-1],
-                                    text=round(distance[y.index(y[-1])], 2),
-                                    showarrow=True,
-                                    arrowhead=3,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="red"
-                                    ),
-                                    )
+            plot.add_annotation(x=x_value,
+                                y=y_value,
+                                text=text_value,
+                                ax=0,
+                                ay=-20,
+                                font=dict
+                                    (
+                                    family="Arial",
+                                    size=20,
+                                    color=color
+                                ),
+                                )
+        previous_line_values = (line_number, y_coord, distance_value)
 
-            if floor(distance[-1]) == correct_distance_value \
-                    or (correct_distance_value - tolerance <= floor(distance[-1]) <= correct_distance_value) \
-                    or (correct_distance_value + tolerance >= floor(distance[-1]) >= correct_distance_value):
-                plot.add_annotation(x=X[-1],
-                                    y=y[-1],
-                                    text=round(distance[-1], 2),
-                                    showarrow=True,
-                                    arrowhead=3,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="white"
-                                    ),
-                                    )
-            else:
-                plot.add_annotation(x=X[-1],
-                                    y=y[-1],
-                                    text=round(distance[-1], 2),
-                                    showarrow=True,
-                                    arrowhead=3,
-                                    arrowcolor="#ffffff",
-                                    font=dict
-                                        (
-                                        family="Arial",
-                                        size=18,
-                                        color="red"
-                                    ),
-                                    )
     plot.update_layout(plot_bgcolor=Plot.background_color,
                        legend_title="Legenda")
     plot.update_layout(xaxis=dict(showgrid=Plot.background_grid, zeroline=Plot.background_grid),
@@ -382,7 +260,9 @@ def update_graph_scatter(n, point_size,
            {'height': Plot.height,
             'width': Plot.width,
             "display": "inline-block"}, \
-           "Średnia z dystansu: " + str(round(sum(distance) / len(distance)))
+           f"Średnia wysokość aktualnej kostki: {round(brick_height,2)}", \
+           f"Największa wartość wysokości: {max_distance}", \
+            f"Najmniejsza wartość wysokości: {min_distance}"
 
 
 if __name__ == '__main__':
