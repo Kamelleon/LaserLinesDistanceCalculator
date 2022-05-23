@@ -73,8 +73,8 @@ if __name__ == "__main__":
 
     while True:
         lasers_status = gpio_trigger.get_lasers_status()
-        #sensor_is_cut = gpio_trigger.check_cut_sensor()
-        sensor_is_cut =  True
+        sensor_is_cut = gpio_trigger.check_cut_sensor()
+        # sensor_is_cut =  True
         if lasers_status == "enabled" and sensor_is_cut:
             try:
                 rpi_camera.start_recording()
