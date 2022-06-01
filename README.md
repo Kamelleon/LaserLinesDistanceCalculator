@@ -13,4 +13,12 @@ them by finding green laser lines, middle point and calculating distance between
 
 # Preview
 
-Pictures soon :)
+- Raw image from camera
+
+
+![](https://github.com/Kamelleon/LaserLinesDistanceCalculator/blob/raspberry-gpio-video/preview_pictures/Frame_12.jpg)
+
+- Distances on image after preprocessing
+
+
+![](https://github.com/Kamelleon/LaserLinesDistanceCalculator/blob/raspberry-gpio-video/preview_pictures/distances_on_image.jpg)
