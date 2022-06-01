@@ -18,7 +18,7 @@ them by finding green laser lines, middle point and calculating distance between
 
 ![](https://github.com/Kamelleon/LaserLinesDistanceCalculator/blob/raspberry-gpio-video/preview_pictures/Frame_12.jpg)
 
-- Distances on image after preprocessing
+- Distances on fragment of image after preprocessing
 
 
 ![](https://github.com/Kamelleon/LaserLinesDistanceCalculator/blob/raspberry-gpio-video/preview_pictures/distances_on_image.jpg)
